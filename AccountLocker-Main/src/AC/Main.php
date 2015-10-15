@@ -30,17 +30,22 @@ public function onEnable() {
 		}
 		 public function onCommand(CommandSender $sender, Command $cmd, $label, array $args) {
         if(strtolower($cmd->getName()) === "lockacc") {
-            if(isset($args[0]) && isset($args[1])) {
+            if(isset($args[0]) && isset($args[1])){
                 $name = $args[0];
                 $reason = $args[1];
+               /*will this work?*/ explode(" ",$reason);
                 $target = $this->getServer()->getPlayer($name);
-                if($target === null){
-                $sender->sendMessage("That player is not online");
-                }else{
-              $target->kick("§4Your Account Is Locked! Locked By §e".$this->PlayerFile->get("Banner")." §4For §e".$reason);
-                Server::getInstance()->broadcastMessage("§f".$target->getName()." §9Now Has Thier Account Locked!");
+                if(!$target === null){
                 $ign = $target->getName();
                          $this->PlayerFile = new Config($this->getDataFolder()."Players/".$ign.".yml", Config::YAML);
+                         $this->PlayerFile->set("Ban","true");
+                        $this->PlayerFile->set("Banner",$sender->getName()); 
+                        $this->PlayerFile->set("Reason",$reason);
+                         $this->PlayerFile->save();
+                         $target->kick("§6Your Account Is Locked! Locked By §b".$this->PlayerFile->get("Banner")." §6For §b".$reason);
+                Server::getInstance()->broadcastMessage("§f".$target->getName()." §9Now Has Thier Account Locked!");
+                }else{
+                         $this->PlayerFile = new Config($this->getDataFolder()."Players/".$target->getName().".yml", Config::YAML);
                          $this->PlayerFile->set("Ban","true");
                         $this->PlayerFile->set("Banner",$sender->getName()); 
                         $this->PlayerFile->set("Reason",$reason);
@@ -52,50 +57,35 @@ public function onEnable() {
             if(isset($args[0])) {
                 $name = $args[0];
                 $target = $this->getServer()->getPlayer($name);
-                if($target === null){
-                $sender->sendMessage("That player is not online");
-                }else{
-                
                 $ign = $target->getName();
                          $this->PlayerFile = new Config($this->getDataFolder()."Players/".$ign.".yml", Config::YAML);
                          $this->PlayerFile->set("Ban","false");
                          $target->sendMessage("§aYour account is now unlocked!");
                          $this->PlayerFile->save();
+                	
                 }
                 }
-                }
-                }
+		 }
+               
 			public function onProcessCmd(PlayerCommandPreProcessEvent $ev){
 			 if($this->PlayerFile->get("Ban") === "true"){
 			 $ev->setCancelled();
-			 $ev->getplayer()->sendMessage("§4Your Account Is Locked! Banned By §e".$this->PlayerFile->get("Banner")." §4For §e".$this->PlayerFile->get("Reason"));
-			 			if($ev->getMessage() === "/login"){
-			$ev->setCancelled();
-			}
 			}
 			}
 			public function onJoin(PlayerJoinEvent $ev){
 			$player=$ev->getPlayer();
 			 $ign = $player->getName();
                          $this->PlayerFile = new Config($this->getDataFolder()."Players/".$ign.".yml", Config::YAML);
-                         
                        if($this->PlayerFile->get("Ban") === "true"){
-                       $player->setNameTag("§4[ACCOUNT LOCKED]\n".$ign);
-                       $ev->getplayer()->sendMessage("§4Your Account Is Locked! Banned By §e".$this->PlayerFile->get("Banner")." §4For §e".$this->PlayerFile->get("Reason"));
+                       $player->setNameTag("§c[ACCOUNT LOCKED]\n".$ign);
 			}
 			}
 			public function onChat(PlayerChatEvent $ev){
 			 			$player=$ev->getPlayer();
 			 $ign = $player->getName();
                          $this->PlayerFile = new Config($this->getDataFolder()."Players/".$ign.".yml", Config::YAML);
-                         
                        if($this->PlayerFile->get("Ban") === "true"){
                                               $ev->setCancelled();
-			 
-			 $ev->getplayer()->sendMessage("§4Your Account Is Locked! Banned By §e".$this->PlayerFile->get("Banner")." §4For §e".$this->PlayerFile->get("Reason"));
-			if($ev->getMessage() === "/login"){
-			$ev->setCancelled();
-			}
 			}
 			}
 			public function onInteract(PlayerInteractEvent $ev){
@@ -104,10 +94,7 @@ public function onEnable() {
                          $this->PlayerFile = new Config($this->getDataFolder()."Players/".$ign.".yml", Config::YAML);
                          
                        if($this->PlayerFile->get("Ban") === "true"){
-                       
-                      
-                       $ev->getplayer()->sendMessage("§4Your Account Is Locked! Banned By §e".$this->PlayerFile->get("Banner")." §4For §e".$this->PlayerFile->get("Reason"));
-                       
+                     $ev->setCancelled();
 			}
 			}
 
@@ -118,8 +105,6 @@ public function onEnable() {
             if(!file_exists($file)){
                 $this->PlayerFile = new Config($this->getDataFolder()."Players/".$ign.".yml", Config::YAML);
                 $this->PlayerFile->set("Ban","false");
-                
-                
                 $this->PlayerFile->save();
             }
         }
