@@ -58,15 +58,21 @@ public function onEnable() {
                 $name = $args[0];
                 $target = $this->getServer()->getPlayer($name);
                 $ign = $target->getName();
+                if(!$target === null){
                          $this->PlayerFile = new Config($this->getDataFolder()."Players/".$ign.".yml", Config::YAML);
                          $this->PlayerFile->set("Ban","false");
-                         $target->sendMessage("§aYour account is now unlocked!");
+                         $target->sendMessage("You are unlocked!")
                          $this->PlayerFile->save();
                 	
+                }else{
+                 $this->PlayerFile = new Config($this->getDataFolder()."Players/".$ign.".yml", Config::YAML);
+                         $this->PlayerFile->set("Ban","false");
+                         $this->PlayerFile->save();	
                 }
+           
                 }
 		 }
-               
+		 }
 			public function onProcessCmd(PlayerCommandPreProcessEvent $ev){
 			 if($this->PlayerFile->get("Ban") === "true"){
 			 $ev->setCancelled();
