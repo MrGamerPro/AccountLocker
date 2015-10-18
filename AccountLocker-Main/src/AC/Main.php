@@ -42,8 +42,8 @@ public function onEnable() {
                         $this->PlayerFile->set("Banner",$sender->getName()); 
                         $this->PlayerFile->set("Reason",$reason);
                          $this->PlayerFile->save();
-                         $target->kick("§6Your Account Is Locked! Locked By §b".$this->PlayerFile->get("Banner")." §6For §b".$reason);
-                Server::getInstance()->broadcastMessage("§f".$target->getName()." §9Now Has Thier Account Locked!");
+                         $target->kick("§6Your Account Is Locked! Locked By §b".$this->PlayerFile->get("Banner")." §6For§e:§b".$reason);
+                Server::getInstance()->broadcastMessage("§f".$target->getName()."'s §caccount has been §4LOCKED§e....");
                 }else{
                          $this->PlayerFile = new Config($this->getDataFolder()."Players/".$target->getName().".yml", Config::YAML);
                          $this->PlayerFile->set("Ban","true");
@@ -61,7 +61,7 @@ public function onEnable() {
                 if(!$target === null){
                          $this->PlayerFile = new Config($this->getDataFolder()."Players/".$ign.".yml", Config::YAML);
                          $this->PlayerFile->set("Ban","false");
-                         $target->sendMessage("You are unlocked!")
+                         $target->sendMessage("§8- §aYour account has been §bunlocked§e...")
                          $this->PlayerFile->save();
                 	
                 }else{
@@ -83,7 +83,7 @@ public function onEnable() {
 			 $ign = $player->getName();
                          $this->PlayerFile = new Config($this->getDataFolder()."Players/".$ign.".yml", Config::YAML);
                        if($this->PlayerFile->get("Ban") === "true"){
-                       $player->setNameTag("§c[ACCOUNT LOCKED]\n".$ign);
+                       $player->setNameTag("§4[§c ACCOUNT LOCKED §4]§e\n".$ign);
 			}
 			}
 			public function onChat(PlayerChatEvent $ev){
